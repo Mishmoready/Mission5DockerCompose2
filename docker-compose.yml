@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  backend:
+    env_file: ./Metro/backend/.env
+    build:
+      context: ./Metro/backend
+      dockerfile: dockerfile # Name of the backend's Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongo
+    environment:
+      MONGODB_URI: "mongodb://mongo:27017/apihouses"
+    links:
+      - mongo
+
+  frontend:
+    build:
+      context: ./Metro
+      dockerfile: Dockerfile # Name of the frontend's Dockerfile
+    ports:
+      - "3000:3000"
+
+  mongo:
+    image: "mongo:latest"
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodata:/data/db
+
+volumes:
+  mongodata:
