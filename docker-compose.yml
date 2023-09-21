@@ -1,26 +1,23 @@
-version: "3"
+version: "3.8"
 
 services:
   backend:
-    env_file: ./Metro/backend/.env
-    build:
-      context: ./Metro/backend
-      dockerfile: dockerfile # Name of the backend's Dockerfile
+    image: mishmainmo/mission5official:backend
     ports:
       - "8080:8080"
     depends_on:
       - mongo
     environment:
       MONGODB_URI: "mongodb://mongo:27017/apihouses"
-    links:
-      - mongo
+    networks:
+      - metro_network
 
   frontend:
-    build:
-      context: ./Metro
-      dockerfile: Dockerfile # Name of the frontend's Dockerfile
+    image: mishmainmo/mission5official:frontend
     ports:
       - "3000:3000"
+    networks:
+      - metro_network
 
   mongo:
     image: "mongo:latest"
@@ -28,6 +25,12 @@ services:
       - "27017:27017"
     volumes:
       - mongodata:/data/db
+    networks:
+      - metro_network
 
 volumes:
   mongodata:
+
+networks:
+  metro_network:
+    driver: bridge
